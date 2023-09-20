@@ -47,62 +47,43 @@ class _HomePageState extends State<HomePage>
     _dragDownAnimation = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
-    );
+    )..value = 1;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.paddingOf(context).top;
-    final bottomPadding = MediaQuery.paddingOf(context).bottom;
     return Scaffold(
       backgroundColor: Colors.grey[400],
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: topPadding,
-          // bottom: bottomPadding,
-        ),
-        child: LayoutBuilder(
-          builder: (context, constr) {
-            return Stack(
-              children: [
-                GestureDetector(
-                  // onTap: _toggleDragUpDown,
-                  child: Container(
-                    color: Colors.blue[900],
-                  ),
-                ),
-                AnimatedBuilder(
-                  animation: _dragDownAnimation,
-                  builder: (context, child) {
-                    final maxHeight = constr.maxHeight - bottomPadding - 50;
-
-                    final verticalOffset = maxHeight * _dragDownAnimation.value;
-                    return Transform(
-                      transform: Matrix4.identity()
-                        ..translate(
-                          .0,
-                          verticalOffset,
-                        ),
-                      child: GestureDetector(
-                        onTap: _toggleDragUpDown,
-                        onVerticalDragUpdate: (details) {
-                          _onVerticalDragUpdate(details, constr.maxHeight);
-                        },
-                        onVerticalDragEnd: _onVerticalDragEnd,
-                        child: SecondaryPage(
-                          height: constr.maxHeight - verticalOffset,
-                          onCollapsedTap: _toggleDragUpDown,
-                          onCollapseIconTap: _toggleDragUpDown,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+      body: LayoutBuilder(
+        builder: (context, constr) {
+          return Stack(
+            children: [
+              Container(
+                color: Colors.blue[900],
+              ),
+              AnimatedBuilder(
+                animation: _dragDownAnimation,
+                builder: (context, child) {
+                  return GestureDetector(
+                    onVerticalDragUpdate: (details) {
+                      _onVerticalDragUpdate(details, constr.maxHeight);
+                    },
+                    onVerticalDragEnd: _onVerticalDragEnd,
+                    onTap: _toggleDragUpDown,
+                    child: SecondaryPage(
+                      constr: constr,
+                      animationValue: _dragDownAnimation.value,
+                      onCollapsedTap: _toggleDragUpDown,
+                      onCollapseIconTap: _toggleDragUpDown,
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
